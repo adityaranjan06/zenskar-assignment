@@ -7,7 +7,7 @@ This project implements a two-way integration between a local customer catalog a
 - **Customer Catalog API:**  
   CRUD operations on a customer catalog stored in a SQLite database.
 - **Stripe Integration:**  
-  Two-way synchronization between the local customer catalog and Stripe. When a customer is created or deleted locally, events are sent via Kafka to a worker that updates Stripe. Similarly, Stripe sends webhook events (e.g., `customer.created`, `customer.deleted`) to update the local catalog.
+  Two-way synchronization between the local customer catalog and Stripe. When a customer is created, updated or deleted locally, events are sent via Kafka to a worker that updates Stripe. Similarly, Stripe sends webhook events (e.g., `customer.created`, `customer.deleted`, `customer.update`) to update the local catalog.
 - **Kafka Integration:**  
   Uses Kafka as a messaging/queuing system to decouple application components.
   
