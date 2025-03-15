@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+confluent-kafka
+stripe
+python-dotenv
