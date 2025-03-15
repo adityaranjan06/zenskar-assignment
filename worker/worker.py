@@ -1,4 +1,4 @@
-
+# worker/worker.py
 import json
 import stripe
 from confluent_kafka import Consumer, KafkaError
@@ -8,6 +8,7 @@ import os
 load_dotenv() 
 
 EVENT_CUSTOMER_CREATED = "customer_created"
+EVENT_CUSTOMER_UPDATED = "customer_updated" 
 EVENT_CUSTOMER_DELETED = "customer_deleted"
 
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "")
@@ -42,6 +43,17 @@ def process_message(msg):
         except Exception as e:
             print(f"Stripe: Error creating customer {customer_id}: {e}")
 
+    elif action == EVENT_CUSTOMER_UPDATED:
+        try:
+            stripe.Customer.modify(
+                customer_id,
+                name=customer_name,
+                email=customer_email
+            )
+            print(f"Stripe: Customer {customer_id} updated.")
+        except Exception as e:
+            print(f"Stripe: Error updating customer {customer_id}: {e}")
+
     elif action == EVENT_CUSTOMER_DELETED:
         try:
             stripe.Customer.delete(customer_id)
@@ -50,7 +62,6 @@ def process_message(msg):
             print(f"Stripe: Customer {customer_id} not found in Stripe: {e}")
         except Exception as e:
             print(f"Stripe: Error deleting customer {customer_id}: {e}")
-
     else:
         print(f"Unknown action {action}")
 

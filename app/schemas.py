@@ -9,6 +9,10 @@ class CustomerSchema(BaseModel):
     class Config:
         orm_mode = True
 
+class CustomerUpdateSchema(BaseModel):
+    name: str
+    email: str
+
 class StripeWebhookData(BaseModel):
     object: dict
 

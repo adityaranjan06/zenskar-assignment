@@ -3,9 +3,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import Customer
-from ..schemas import CustomerSchema
+from ..schemas import CustomerSchema, CustomerUpdateSchema
 from ..kafka_producer import (
     EVENT_CUSTOMER_CREATED,
+    EVENT_CUSTOMER_UPDATED,
     EVENT_CUSTOMER_DELETED,
     create_customer_event,
     send_to_kafka
@@ -38,7 +39,7 @@ def get_customer(customer_id: str, db: Session = Depends(get_db)):
     return customer
 
 @router.put("/customers/{customer_id}", response_model=CustomerSchema)
-def update_customer(customer_id: str, customer: CustomerSchema, db: Session = Depends(get_db)):
+def update_customer(customer_id: str, customer: CustomerUpdateSchema, db: Session = Depends(get_db)):
     existing = db.query(Customer).filter(Customer.id == customer_id).first()
     if not existing:
         raise HTTPException(status_code=404, detail="Customer not found")
@@ -46,7 +47,7 @@ def update_customer(customer_id: str, customer: CustomerSchema, db: Session = De
     existing.email = customer.email
     db.commit()
     db.refresh(existing)
-    event = create_customer_event(EVENT_CUSTOMER_CREATED, existing)
+    event = create_customer_event(EVENT_CUSTOMER_UPDATED, existing)
     send_to_kafka("customer_events", event)
     return existing
 

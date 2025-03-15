@@ -2,7 +2,7 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # Load .env file at startup
+load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./db.sqlite3")
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "")
